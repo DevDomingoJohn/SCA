@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,16 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.domin.sca.core.Server
 
 @Composable
 fun HomeScreen(
-    navigateServer: (Int) -> Unit,
-    navigateClient: (String,Int) -> Unit
+    navigateServer: () -> Unit,
+    navigateClient: () -> Unit,
+    viewModel: HomeVM
 ) {
     val serverPort = remember { mutableStateOf("") }
     val port = remember { mutableStateOf("") }
     val ip = remember { mutableStateOf("") }
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,13 +53,14 @@ fun HomeScreen(
         ) {
             TextField(
                 value = serverPort.value,
-                onValueChange = {serverPort.value += it},
+                onValueChange = {serverPort.value = it},
                 placeholder = { Text(text = "Port") },
                 modifier = Modifier.fillMaxWidth(0.7f)
             )
             Button(
                 onClick = {
-                    navigateServer(serverPort.value.toInt())
+//                    navigateServer()
+                    viewModel.startServer(serverPort.value.toInt())
                 }
             ) {
                 Text(text = "Start Server")
@@ -74,19 +77,20 @@ fun HomeScreen(
         ) {
             TextField(
                 value = ip.value,
-                onValueChange = {ip.value += it},
+                onValueChange = {ip.value = it},
                 placeholder = { Text(text = "Server IP") },
                 modifier = Modifier.fillMaxWidth(0.7f)
             )
             TextField(
                 value = port.value,
-                onValueChange = {port.value += it},
+                onValueChange = {port.value = it},
                 placeholder = { Text(text = "Server Port") },
                 modifier = Modifier.fillMaxWidth(0.7f)
             )
             Button(
                 onClick = {
-                    navigateClient(ip.value,port.value.toInt())
+                    viewModel.connectToServer(ip.value,port.value.toInt())
+                    navigateClient()
                 }
             ) {
                 Text(text = "Connect To Server")
