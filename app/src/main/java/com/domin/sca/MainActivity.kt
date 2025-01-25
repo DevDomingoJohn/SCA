@@ -39,17 +39,18 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable<Home> {
                         HomeScreen(
-                            navigateServer = { navController.navigate(Server) },
-                            navigateClient = { navController.navigate(Client) },
+                            navigateServer = { port -> navController.navigate(Server(port)) },
+                            navigateClient = { ip, port -> navController.navigate(Client(ip,port)) },
                             viewModel = viewModel
                         )
                     }
                     composable<Server> {
-                        //val args = it.toRoute<Server>()
-                        ServerScreen()
+                        val args = it.toRoute<Server>()
+                        ServerScreen(args.port)
                     }
                     composable<Client> {
-                        ClientScreen()
+                        val args = it.toRoute<Client>()
+                        ClientScreen(args.ip,args.port)
                     }
                 }
             }

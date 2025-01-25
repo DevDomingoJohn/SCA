@@ -8,7 +8,8 @@ import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ServerSocket(
-    private val port: Int
+    private val port: Int,
+    val addLog: (String) -> Unit
 ) {
     private lateinit var serverSocket: ServerSocket
     private lateinit var outputStream: OutputStream
@@ -19,12 +20,12 @@ class ServerSocket(
         Thread {
             try {
                 serverSocket = ServerSocket(port)
-                Log.i("Server","Started Server on port: $port")
+                addLog("Started Server on port: $port")
 
                 while(isRunning.get()) {
                     val socket = serverSocket.accept()
                     if (socket.isConnected) {
-                        Log.i("Server Socket","Client Connected: ${socket.inetAddress.hostAddress}")
+                        addLog("${socket.inetAddress.hostAddress} Joined The Server")
 
                         outputStream = socket.getOutputStream()
                         val server = "Welcome To Soul Society!"
@@ -44,15 +45,16 @@ class ServerSocket(
         }.start()
     }
 
-    fun handleClient(client: Socket) {
+    private fun handleClient(client: Socket) {
         try {
             val inputStream = client.getInputStream()
 
             while(isRunning.get()) {
                 val buffer = ByteArray(1024)
                 val bytesRead = inputStream.read(buffer)
+                if (bytesRead == -1) break
                 val message = String(buffer,0,bytesRead)
-                Log.i("Client To Server",message)
+                addLog("${client.inetAddress.hostAddress}: $message")
             }
 
         } catch (e: IOException) {
@@ -60,13 +62,14 @@ class ServerSocket(
         } finally {
             client.close()
             clientSockets.remove(client)
+            addLog("${client.inetAddress.hostAddress} Disconnected!")
         }
     }
 
     fun message(text: String) {
         Thread {
             try {
-                outputStream.write(text.toByteArray())
+                outputStream.write("${serverSocket.inetAddress.hostAddress}: $text".toByteArray())
                 outputStream.flush()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -92,7 +95,5 @@ class ServerSocket(
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-        Log.i("Server Socket","Server Stopped")
     }
 }

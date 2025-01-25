@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,10 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.domin.sca.core.MyApp
+import com.domin.sca.core.localIp
 import com.domin.sca.core.utils.ViewModelFactoryHelper
 
 @Composable
-fun ServerScreen() {
+fun ServerScreen(
+    port: Int
+) {
     val message = remember { mutableStateOf("") }
     val vm = viewModel<ServerVM>(
         factory = ViewModelFactoryHelper(
@@ -35,7 +39,12 @@ fun ServerScreen() {
             )
         )
     )
-    val state by vm.state.collectAsState()
+    val logs by vm.logs.collectAsState()
+
+    LaunchedEffect(key1 = true) {
+        vm.startServer(port)
+    }
+
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,13 +52,14 @@ fun ServerScreen() {
             .fillMaxSize()
             .padding(top = 20.dp)
     ) {
+        Text(text = "Your Local IP: $localIp")
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.6f)
                 .padding(start = 8.dp)
         ) {
-            items(state.logs) { log ->
+            items(logs) { log ->
                 Text(text = log)
             }
         }

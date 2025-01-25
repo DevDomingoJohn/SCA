@@ -8,7 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class ClientSocket(
     private val ip: String,
-    private val port: Int
+    private val port: Int,
+    private val addLog: (String) -> Unit
 ) {
     private lateinit var socket: Socket
     private lateinit var outputStream: OutputStream
@@ -20,16 +21,13 @@ class ClientSocket(
                 socket = Socket(ip,port)
 
                 outputStream = socket.getOutputStream()
-                val client = "Hello I'm ${socket.inetAddress.hostAddress}"
-                outputStream.write(client.toByteArray())
-                outputStream.flush()
 
                 val inputStream = socket.getInputStream()
                 while(isConnected.get()) {
                     val buffer = ByteArray(1024)
                     val bytesRead = inputStream.read(buffer)
                     val message = String(buffer,0,bytesRead)
-                    Log.i("Server To Client",message)
+                    addLog("${socket.inetAddress.hostAddress}: $message")
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -51,6 +49,5 @@ class ClientSocket(
     fun disconnect() {
         isConnected.set(false)
         socket.close()
-        Log.i("Client Socket","Disconnected From The Server")
     }
 }

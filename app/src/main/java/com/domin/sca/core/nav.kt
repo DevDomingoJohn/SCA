@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 object Home
 
 @Serializable
-object Server
+data class Server(val port: Int)
 
 @Serializable
-object Client
+data class Client(val ip: String, val port: Int)

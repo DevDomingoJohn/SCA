@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
-    navigateServer: () -> Unit,
-    navigateClient: () -> Unit,
+    navigateServer: (Int) -> Unit,
+    navigateClient: (String, Int) -> Unit,
     viewModel: HomeVM
 ) {
     val serverPort = remember { mutableStateOf("") }
@@ -59,8 +59,7 @@ fun HomeScreen(
             )
             Button(
                 onClick = {
-//                    navigateServer()
-                    viewModel.startServer(serverPort.value.toInt())
+                    navigateServer(serverPort.value.toInt())
                 }
             ) {
                 Text(text = "Start Server")
@@ -89,8 +88,7 @@ fun HomeScreen(
             )
             Button(
                 onClick = {
-                    viewModel.connectToServer(ip.value,port.value.toInt())
-                    navigateClient()
+                    navigateClient(ip.value,port.value.toInt())
                 }
             ) {
                 Text(text = "Connect To Server")

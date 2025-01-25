@@ -5,6 +5,8 @@ import android.net.wifi.WifiManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.domin.sca.core.localIp
+import com.domin.sca.core.network.ServerSocket
 import com.domin.sca.core.serverSocket
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,23 +18,35 @@ class ServerVM(
     private val connectivityManager: ConnectivityManager
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(ServerState())
-    val state = _state.asStateFlow()
+    private val _logs = MutableStateFlow<List<String>>(emptyList())
+    val logs = _logs.asStateFlow()
+
+    fun addLog(log: String) {
+        viewModelScope.launch {
+            _logs.update { it + log }
+        }
+    }
 
     fun message(text: String) {
         viewModelScope.launch {
             serverSocket.message(text)
-
-            val list = state.value.logs.toMutableList()
-            list.add(text)
-            _state.update {
-                it.copy(
-                    logs = list
-                )
-            }
+            addLog(text)
         }
     }
+
+    fun startServer(port: Int) {
+        viewModelScope.launch {
+            serverSocket = ServerSocket(port) {
+                addLog(it)
+            }
+            serverSocket.start()
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
+        viewModelScope.launch {
+            serverSocket.stop()
+        }
     }
 }
