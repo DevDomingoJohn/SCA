@@ -5,6 +5,7 @@ import android.net.wifi.WifiManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.domin.sca.core.localIp
 import com.domin.sca.core.network.ServerSocket
 import com.domin.sca.core.serverSocket
@@ -30,7 +31,7 @@ class ServerVM(
     fun message(text: String) {
         viewModelScope.launch {
             serverSocket.message(text)
-            addLog(text)
+            addLog("Me: $text")
         }
     }
 
@@ -43,8 +44,7 @@ class ServerVM(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    fun stopServer() {
         viewModelScope.launch {
             serverSocket.stop()
         }

@@ -46,11 +46,15 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<Server> {
                         val args = it.toRoute<Server>()
-                        ServerScreen(args.port)
+                        ServerScreen(args.port) {
+                            navController.popBackStack()
+                        }
                     }
                     composable<Client> {
                         val args = it.toRoute<Client>()
-                        ClientScreen(args.ip,args.port)
+                        ClientScreen(args.ip,args.port) {
+                            navController.popBackStack()
+                        }
                     }
                 }
             }

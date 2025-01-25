@@ -1,5 +1,6 @@
 package com.domin.sca.server
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +29,8 @@ import com.domin.sca.core.utils.ViewModelFactoryHelper
 
 @Composable
 fun ServerScreen(
-    port: Int
+    port: Int,
+    onBackPressed: () -> Unit
 ) {
     val message = remember { mutableStateOf("") }
     val vm = viewModel<ServerVM>(
@@ -50,14 +52,13 @@ fun ServerScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 20.dp)
+            .padding(top = 30.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(text = "Your Local IP: $localIp")
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.6f)
-                .padding(start = 8.dp)
+                .fillMaxHeight(0.7f)
         ) {
             items(logs) { log ->
                 Text(text = log)
@@ -66,7 +67,7 @@ fun ServerScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.4f)
+                .fillMaxHeight(0.3f)
         ) {
             TextField(
                 value = message.value,
@@ -84,6 +85,10 @@ fun ServerScreen(
                 Text(text = "Send")
             }
         }
+    }
 
+    BackHandler {
+        vm.stopServer()
+        onBackPressed()
     }
 }

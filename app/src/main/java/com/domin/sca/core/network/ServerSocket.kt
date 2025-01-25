@@ -1,6 +1,5 @@
 package com.domin.sca.core.network
 
-import android.util.Log
 import java.io.IOException
 import java.io.OutputStream
 import java.net.ServerSocket
@@ -69,7 +68,7 @@ class ServerSocket(
     fun message(text: String) {
         Thread {
             try {
-                outputStream.write("${serverSocket.inetAddress.hostAddress}: $text".toByteArray())
+                outputStream.write(text.toByteArray())
                 outputStream.flush()
             } catch (e: IOException) {
                 e.printStackTrace()

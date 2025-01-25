@@ -27,7 +27,7 @@ class ClientVM(
     fun message(text: String) {
         viewModelScope.launch {
             clientSocket.message(text)
-            addLog(text)
+            addLog("Me: $text")
         }
     }
 
@@ -40,8 +40,7 @@ class ClientVM(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    fun disconnect() {
         viewModelScope.launch {
             clientSocket.disconnect()
         }

@@ -1,5 +1,6 @@
 package com.domin.sca.client
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +30,8 @@ import com.domin.sca.core.utils.ViewModelFactoryHelper
 @Composable
 fun ClientScreen(
     ip: String,
-    port: Int
+    port: Int,
+    onBackPressed: () -> Unit
 ) {
     val message = remember { mutableStateOf("") }
 
@@ -87,6 +89,10 @@ fun ClientScreen(
                 Text(text = "Send")
             }
         }
+    }
 
+    BackHandler {
+        vm.disconnect()
+        onBackPressed()
     }
 }

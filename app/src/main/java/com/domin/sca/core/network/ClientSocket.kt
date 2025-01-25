@@ -1,6 +1,5 @@
 package com.domin.sca.core.network
 
-import android.util.Log
 import java.io.IOException
 import java.io.OutputStream
 import java.net.Socket
@@ -48,6 +47,11 @@ class ClientSocket(
 
     fun disconnect() {
         isConnected.set(false)
-        socket.close()
+        try {
+            socket.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
 }
