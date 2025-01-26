@@ -1,5 +1,6 @@
 package com.domin.sca.core.network
 
+import com.domin.sca.core.clientConnected
 import java.io.IOException
 import java.io.OutputStream
 import java.net.Socket
@@ -12,12 +13,13 @@ class ClientSocket(
 ) {
     private lateinit var socket: Socket
     private lateinit var outputStream: OutputStream
-    private val isConnected = AtomicBoolean(true)
+    private val isConnected = AtomicBoolean(false)
 
     fun connect() {
         Thread {
             try {
                 socket = Socket(ip,port)
+                isConnected.set(true)
 
                 outputStream = socket.getOutputStream()
 
@@ -25,11 +27,14 @@ class ClientSocket(
                 while(isConnected.get()) {
                     val buffer = ByteArray(1024)
                     val bytesRead = inputStream.read(buffer)
+                    if (bytesRead == -1) break
                     val message = String(buffer,0,bytesRead)
                     addLog("${socket.inetAddress.hostAddress}: $message")
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
+            } finally {
+                disconnect()
             }
         }.start()
     }
@@ -46,12 +51,14 @@ class ClientSocket(
     }
 
     fun disconnect() {
-        isConnected.set(false)
-        try {
-            socket.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
+        if (isConnected.get()) {
+            try {
+                socket.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            addLog("You Disconnected From The Server")
+            isConnected.set(false)
         }
-
     }
 }
