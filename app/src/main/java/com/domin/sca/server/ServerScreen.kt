@@ -23,24 +23,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.domin.sca.core.MyApp
-import com.domin.sca.core.localIp
-import com.domin.sca.core.utils.ViewModelFactoryHelper
 
 @Composable
 fun ServerScreen(
+    localIp: String,
     port: Int,
     onBackPressed: () -> Unit
 ) {
     val message = remember { mutableStateOf("") }
-    val vm = viewModel<ServerVM>(
-        factory = ViewModelFactoryHelper(
-            ServerVM(
-                MyApp.mainModule.wifiManager,
-                MyApp.mainModule.connectivityManager
-            )
-        )
-    )
+    val vm = viewModel<ServerVM>()
     val logs by vm.logs.collectAsState()
 
     LaunchedEffect(key1 = true) {

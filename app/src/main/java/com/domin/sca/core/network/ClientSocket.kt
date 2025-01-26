@@ -1,6 +1,5 @@
 package com.domin.sca.core.network
 
-import com.domin.sca.core.clientConnected
 import java.io.IOException
 import java.io.OutputStream
 import java.net.Socket

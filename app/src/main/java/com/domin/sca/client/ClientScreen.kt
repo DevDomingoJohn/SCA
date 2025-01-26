@@ -23,26 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.domin.sca.core.MyApp
-import com.domin.sca.core.localIp
-import com.domin.sca.core.utils.ViewModelFactoryHelper
 
 @Composable
 fun ClientScreen(
+    localIp: String,
     ip: String,
     port: Int,
     onBackPressed: () -> Unit
 ) {
     val message = remember { mutableStateOf("") }
 
-    val vm = viewModel<ClientVM>(
-        factory = ViewModelFactoryHelper(
-            ClientVM(
-                MyApp.mainModule.wifiManager,
-                MyApp.mainModule.connectivityManager
-            )
-        )
-    )
+    val vm = viewModel<ClientVM>()
 
     val logs by vm.logs.collectAsState()
 
@@ -55,14 +46,13 @@ fun ClientScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 20.dp)
+            .padding(top = 30.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(text = "Your Local IP: $localIp")
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.6f)
-                .padding(start = 8.dp)
+                .fillMaxHeight(0.7f)
         ) {
             items(logs) { log ->
                 Text(text = log)
@@ -71,7 +61,7 @@ fun ClientScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.4f)
+                .fillMaxHeight(0.3f)
         ) {
             TextField(
                 value = message.value,

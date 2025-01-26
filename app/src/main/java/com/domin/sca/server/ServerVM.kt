@@ -1,28 +1,19 @@
 package com.domin.sca.server
 
-import android.net.ConnectivityManager
-import android.net.wifi.WifiManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.domin.sca.core.localIp
 import com.domin.sca.core.network.ServerSocket
-import com.domin.sca.core.serverSocket
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ServerVM(
-    private val wifiManager: WifiManager,
-    private val connectivityManager: ConnectivityManager
-): ViewModel() {
-
+class ServerVM: ViewModel() {
+    private lateinit var serverSocket: ServerSocket
     private val _logs = MutableStateFlow<List<String>>(emptyList())
     val logs = _logs.asStateFlow()
 
-    fun addLog(log: String) {
+    private fun addLog(log: String) {
         viewModelScope.launch {
             _logs.update { it + log }
         }

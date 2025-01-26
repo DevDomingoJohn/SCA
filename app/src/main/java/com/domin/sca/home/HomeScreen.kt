@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,13 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.domin.sca.core.MyApp
+import com.domin.sca.core.utils.ViewModelFactoryHelper
 
 @Composable
 fun HomeScreen(
-    navigateServer: (Int) -> Unit,
-    navigateClient: (String, Int) -> Unit,
-    viewModel: HomeVM
+    navigateServer: (String, Int) -> Unit,
+    navigateClient: (String, String, Int) -> Unit
 ) {
+
+    val vm = viewModel<HomeVM>(
+        factory = ViewModelFactoryHelper(HomeVM(MyApp.mainModule.connectivityManager))
+    )
+    val localIp = vm.getLocalIp()
+
     val serverPort = remember { mutableStateOf("") }
     val port = remember { mutableStateOf("") }
     val ip = remember { mutableStateOf("") }
@@ -59,7 +66,7 @@ fun HomeScreen(
             )
             Button(
                 onClick = {
-                    navigateServer(serverPort.value.toInt())
+                    navigateServer(localIp,serverPort.value.toInt())
                 }
             ) {
                 Text(text = "Start Server")
@@ -88,7 +95,7 @@ fun HomeScreen(
             )
             Button(
                 onClick = {
-                    navigateClient(ip.value,port.value.toInt())
+                    navigateClient(localIp,ip.value,port.value.toInt())
                 }
             ) {
                 Text(text = "Connect To Server")
