@@ -85,31 +85,6 @@ private fun handleClient(client: Socket) {
     }
 }
 ```
-Sending Messages
-```kotlin
-fun message(text: String) {
-    Thread {
-        try {
-            outputStream.write(text.toByteArray())
-            outputStream.flush()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }.start()
-}
-```
-Stopping Server
-```kotlin
-fun stop() {
-    isRunning.set(false)
-
-    try {
-        serverSocket.close()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-}
-```
 ---
 **Client Socket (Kotlin)**
 
@@ -141,33 +116,6 @@ fun connect() {
             disconnect() // Call disconnect function to close the socket after the server stopped
         }
     }.start()
-}
-```
-Sending Messages to the Server
-```kotlin
-fun message(text: String) {
-    Thread {
-        try {
-            outputStream.write(text.toByteArray())
-            outputStream.flush()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }.start()
-}
-```
-Disconnecting from the server
-```kotlin
-fun disconnect() {
-    if (isConnected.get()) {
-        try {
-            socket.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        addLog("You Disconnected From The Server")
-        isConnected.set(false)
-    }
 }
 ```
 
