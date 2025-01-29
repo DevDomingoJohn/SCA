@@ -141,7 +141,7 @@ class ClientSocket(
        }
    }
    ```
-   [Check ClientVM For More Details About The Usage](/app/src/main/java/com/domin/sca/client/ClientVM.kt)
+   [Check ClientVM Class For More Details About The Usage](/app/src/main/java/com/domin/sca/client/ClientVM.kt)
 
 5. **Common Pitfalls Addressed:**
    1. **UI Blocking:**
