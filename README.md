@@ -59,8 +59,8 @@ while(isRunning.get()) {
    }.start()
 }
 ```
-[For Full Details About The Implementation](docs/ServerSocket.md)
----
+[For Full Details About Server Socket Implementation](docs/ServerSocket.md)
+
 **Client Socket (Kotlin)**
 
 ```kotlin
@@ -83,7 +83,7 @@ while(isConnected.get()) {
    addLog("${socket.inetAddress.hostAddress}: $message")
 }
 ```
-[For Full Details About The Implementation](docs/ClientSocket.md)
+[For Full Details About Client Socket Implementation](docs/ClientSocket.md)
 
 ## ❓ Common Issues
 - **Connection refused:** Ensure the server is running first.
