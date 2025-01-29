@@ -87,7 +87,7 @@ class ServerSocket(
             // Continuous read loop for client messages
             while(isRunning.get()) {
                 val buffer = ByteArray(1024) // Fixed-size buffer
-                val bytesRead = inputStream.read(buffer)
+                val bytesRead = inputStream.read(buffer) // Blocks until data receive
 
                 // Connection closed by client
                 if (bytesRead == -1) break

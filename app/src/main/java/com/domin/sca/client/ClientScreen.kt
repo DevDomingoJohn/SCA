@@ -31,10 +31,8 @@ fun ClientScreen(
     port: Int,
     onBackPressed: () -> Unit
 ) {
-    val message = remember { mutableStateOf("") }
-
     val vm = viewModel<ClientVM>()
-
+    val message = remember { mutableStateOf("") }
     val logs by vm.logs.collectAsState()
 
     LaunchedEffect(key1 = true) {

@@ -2,6 +2,7 @@ package com.domin.sca.core.network
 
 import java.io.IOException
 import java.io.OutputStream
+import java.net.ConnectException
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 

@@ -8,17 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.domin.sca.core.MyApp
@@ -35,15 +40,18 @@ fun HomeScreen(
     )
     val localIp = vm.getLocalIp()
 
-    val serverPort = remember { mutableStateOf("") }
-    val port = remember { mutableStateOf("") }
-    val ip = remember { mutableStateOf("") }
+    val state by vm.state.collectAsState()
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
+
+        state.errorMessage?.let {
+            Text(it, color = Color.Red)
+        }
+
         Text(
             text = "Server-Client",
             style = MaterialTheme.typography.headlineLarge,
@@ -59,14 +67,15 @@ fun HomeScreen(
                 .padding(10.dp)
         ) {
             TextField(
-                value = serverPort.value,
-                onValueChange = {serverPort.value = it},
+                value = state.serverPort,
+                onValueChange = {vm.updateServerPort(it)},
                 placeholder = { Text(text = "Port") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(0.7f)
             )
             Button(
                 onClick = {
-                    navigateServer(localIp,serverPort.value.toInt())
+                    if (vm.validateServerField()) navigateServer(localIp,state.serverPort.toInt())
                 }
             ) {
                 Text(text = "Start Server")
@@ -82,20 +91,22 @@ fun HomeScreen(
                 .padding(10.dp)
         ) {
             TextField(
-                value = ip.value,
-                onValueChange = {ip.value = it},
+                value = state.ip,
+                onValueChange = { vm.updateClientIp(it) },
                 placeholder = { Text(text = "Server IP") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(0.7f)
             )
             TextField(
-                value = port.value,
-                onValueChange = {port.value = it},
+                value = state.port,
+                onValueChange = { vm.updateClientPort(it) },
                 placeholder = { Text(text = "Server Port") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(0.7f)
             )
             Button(
                 onClick = {
-                    navigateClient(localIp,ip.value,port.value.toInt())
+                    if (vm.validateClientFields()) navigateClient(localIp,state.ip,state.port.toInt())
                 }
             ) {
                 Text(text = "Connect To Server")
