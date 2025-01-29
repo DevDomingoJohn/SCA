@@ -1,14 +1,16 @@
-package com.domin.sca.core.network
+# ServerSocket Class Reference
 
-import java.io.IOException
-import java.io.OutputStream
-import java.net.ServerSocket
-import java.net.Socket
-import java.util.concurrent.atomic.AtomicBoolean
-
+```kotlin
 /**
  * A simple TCP server implementation that handles one client at a time.
  * Demonstrates basic socket programming concepts in Android.
+ *
+ * Key Concepts Shown:
+ * - Server socket creation and port binding
+ * - Client connection management
+ * - Thread-per-client model
+ * - Basic network I/O operations
+ * - Graceful shutdown handling
  *
  * @param port The TCP port to listen on (e.g., 8888)
  * @param addLog Callback for logging server events to UI
@@ -18,7 +20,7 @@ class ServerSocket(
     val addLog: (String) -> Unit
 ) {
     // The actual server socket instance
-    private lateinit var serverSocket: ServerSocket
+    private lateinit var serverSocket: java.net.ServerSocket
 
     // Output stream for the currently connected client
     private lateinit var outputStream: OutputStream
@@ -31,11 +33,13 @@ class ServerSocket(
 
     /**
      * Starts the server in a background thread to prevent UI blocking.
+     * Uses a while loop to continuously accept new client connections.
+     * Implements basic client capacity control (max 1 client).
      */
     fun start() {
         Thread {
             try {
-                serverSocket = ServerSocket(port)
+                serverSocket = java.net.ServerSocket(port)
                 addLog("Started Server on port: $port")
 
                 // Main accept loop - runs until stop() is called
@@ -43,22 +47,20 @@ class ServerSocket(
                     val socket = serverSocket.accept()
 
                     // Capacity control: Only allow one client
-                    if (clientSockets.isNotEmpty()){
+                    if (clientSockets.isNotEmpty()) {
                         // Immediately reject new connections when full
                         val tempOutputStream = socket.getOutputStream()
-                        val server = "Server is Full!"
-                        tempOutputStream.write(server.toByteArray())
+                        tempOutputStream.write("Server is Full!".toByteArray())
                         tempOutputStream.flush()
                         socket.close()
-                        continue // Skip to next accept() call
+                        continue  // Skip to next accept() call
                     }
 
                     addLog("${socket.inetAddress.hostAddress} Joined The Server")
 
                     // Set up output stream for this client
                     outputStream = socket.getOutputStream()
-                    val server = "Welcome To Soul Society!"
-                    outputStream.write(server.toByteArray())
+                    outputStream.write("Welcome To Soul Society!".toByteArray())
                     outputStream.flush()
 
                     clientSockets.add(socket)
@@ -70,13 +72,16 @@ class ServerSocket(
                 }
             } catch (e: IOException) {
                 // Expected exception when serverSocket is closed intentionally
-                if (isRunning.get()) e.printStackTrace()
+                if (isRunning.get()) {
+                    e.printStackTrace()
+                }
             }
         }.start()
     }
 
     /**
      * Handles communication with a connected client.
+     * Runs in a separate thread to allow simultaneous I/O.
      *
      * @param client The connected client's socket instance
      */
@@ -86,18 +91,18 @@ class ServerSocket(
 
             // Continuous read loop for client messages
             while(isRunning.get()) {
-                val buffer = ByteArray(1024) // Fixed-size buffer
+                val buffer = ByteArray(1024)  // Fixed-size buffer
                 val bytesRead = inputStream.read(buffer)
 
                 // Connection closed by client
                 if (bytesRead == -1) break
 
-                val message = String(buffer,0,bytesRead)
+                val message = String(buffer, 0, bytesRead)
                 addLog("${client.inetAddress.hostAddress}: $message")
             }
 
         } catch (e: IOException) {
-            e.printStackTrace()
+            addLog("Error handling client: ${e.message}")
         } finally {
             // Cleanup on disconnect
             client.close()
@@ -119,7 +124,7 @@ class ServerSocket(
                 outputStream.write(text.toByteArray())
                 outputStream.flush()
             } catch (e: IOException) {
-                e.printStackTrace()
+                addLog("Failed to send message: ${e.message}")
             }
         }.start()
     }
@@ -131,13 +136,70 @@ class ServerSocket(
      * 3. Closes all client connections
      */
     fun stop() {
-        // Force-close server socket to break out of accept() blocking
         isRunning.set(false)
 
         try {
+            // Force-close server socket to break out of accept() blocking
             serverSocket.close()
         } catch (e: IOException) {
-            e.printStackTrace()
+            addLog("Error stopping server: ${e.message}")
         }
     }
 }
+```
+
+## Key Implementation Notes:
+1. Thread Management:
+   - Uses raw `Thread` instead of coroutines for explicit demonstration
+   - One thread for accept loop + one per client handler 
+   - `AtomicBoolean` ensures thread-safe state checks
+
+2. Client Limitations:
+   - Only allows 1 concurrent client (for simplicity)
+   - Immediate rejection message for excess clients
+
+3. I/O Considerations:
+   - Uses blocking I/O operations (`accept()`, `read()`)
+   - Fixed-size buffer (1024 bytes) limits message size
+   - No encoding handling (assumes ASCII/UTF-8)
+
+4. Error Handling:
+   - Basic exception catching with stack traces
+   - Graceful cleanup in `finally` blocks
+   - UI feedback via `addLog` callback
+
+5. Usage Example in ViewModel:
+   ```kotlin
+   // Start server on port
+   fun startServer(port: Int) {
+        viewModelScope.launch {
+            serverSocket = ServerSocket(port) {
+                addLog(it)
+            }
+            serverSocket.start()
+        }
+    }
+   ```
+   ```kotlin
+   // Send message to client
+   fun message(text: String) {
+        viewModelScope.launch {
+            serverSocket.message(text)
+            addLog("Me: $text")
+        }
+    }
+   ```
+   ```kotlin
+   // Stop server
+   fun stopServer() {
+        viewModelScope.launch {
+            serverSocket.stop()
+        }
+    }
+   ```
+
+## Edge Cases to Consider:
+1. Network Permissions: Requires `<uses-permission android:name="android.permission.INTERNET"/>`
+2. Port Conflicts: Handle `BindException` if port is occupied
+3. Partial Writes: `OutputStream.write()` may not send all bytes
+4. Device Sleep: Network operations may fail when device sleeps
