@@ -131,11 +131,15 @@ class ServerSocket(
      * 3. Closes all client connections
      */
     fun stop() {
-        // Force-close server socket to break out of accept() blocking
         isRunning.set(false)
 
         try {
+            // Force-close server socket to break out of accept() blocking
             serverSocket.close()
+
+            // Close all connected clients
+            clientSockets.forEach { it.close() }
+            clientSockets.clear()
         } catch (e: IOException) {
             e.printStackTrace()
         }

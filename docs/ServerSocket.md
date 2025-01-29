@@ -135,13 +135,17 @@ class ServerSocket(
      * 1. Sets running flag to false
      * 2. Closes the server socket
      * 3. Closes all client connections
-     */
+     */ 
     fun stop() {
         isRunning.set(false)
 
         try {
             // Force-close server socket to break out of accept() blocking
             serverSocket.close()
+           
+            // Close all connected clients
+            clientSockets.forEach { it.close() }
+            clientSockets.clear()
         } catch (e: IOException) {
             addLog("Error stopping server: ${e.message}")
         }

@@ -80,14 +80,14 @@ class ClientSocket(
      * 3. Triggers UI update via addLog
      */
     fun disconnect() {
-        if (isConnected.get()) {
+        if (isConnected.get()) { 
+            isConnected.set(false)
             try {
                 socket.close() // Also closes input/output streams
             } catch (e: IOException) {
                 e.printStackTrace()
             }
             addLog("You Disconnected From The Server")
-            isConnected.set(false)
         }
     }
 }

@@ -2,7 +2,6 @@ package com.domin.sca.core.network
 
 import java.io.IOException
 import java.io.OutputStream
-import java.net.ConnectException
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -79,13 +78,13 @@ class ClientSocket(
      */
     fun disconnect() {
         if (isConnected.get()) {
+            isConnected.set(false)
             try {
                 socket.close() // Also closes input/output streams
             } catch (e: IOException) {
                 e.printStackTrace()
             }
             addLog("You Disconnected From The Server")
-            isConnected.set(false)
         }
     }
 }
