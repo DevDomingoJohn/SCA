@@ -16,9 +16,9 @@ Learn how to:
 
 ## ⚙️ Setup
 1. Clone this repository:
-```
-git clone https://github.com/DevDomingoJohn/SCA.git
-```
+   ```
+   git clone https://github.com/DevDomingoJohn/SCA.git
+   ```
 2. Open in Android Studio (Latest Version)
 3. Run the app on two devices:
     * Launch the server on Device A
@@ -31,93 +31,59 @@ git clone https://github.com/DevDomingoJohn/SCA.git
 ## 📄 Key Code Snippets
 **Server Socket (Kotlin)**
 
-Starting Server
 ```kotlin
-private lateinit var serverSocket: ServerSocket
-private lateinit var outputStream: OutputStream
-private val isRunning = AtomicBoolean(true)
+serverSocket = ServerSocket(port)
+addLog("Started Server on port: $port")
 
-fun start() {
-    Thread {
-        try {
-            serverSocket = ServerSocket(port)
-            addLog("Started Server on port: $port")
+// Main accept loop - runs until stop() is called
+while(isRunning.get()) {
+   val socket = serverSocket.accept()
 
-            while(isRunning.get()) {
-                val socket = serverSocket.accept() // Blocks until a client connects
-                if (socket.isConnected) {
-                    addLog("${socket.inetAddress.hostAddress} Joined The Server")
+   // Capacity control: Only allow one client
+   if (clientSockets.isNotEmpty()){
+      // Immediately reject new connections when full
+      val tempOutputStream = socket.getOutputStream()
+      val server = "Server is Full!"
+      tempOutputStream.write(server.toByteArray())
+      tempOutputStream.flush()
+      socket.close()
+      continue // Skip to next accept() call
+   }
 
-                    outputStream = socket.getOutputStream()
-                    val server = "Welcome To Soul Society!"
-                    outputStream.write(server.toByteArray())
-                    outputStream.flush()
-                }
+   addLog("${socket.inetAddress.hostAddress} Joined The Server")
+   clientSockets.add(socket)
 
-                Thread {
-                    handleClient(socket) // Handles client on different thread
-                }.start()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }.start()
+   // Start client handler thread
+   Thread {
+      handleClient(socket)
+   }.start()
 }
 ```
-Client Handling
-```kotlin
-private fun handleClient(client: Socket) {
-    try {
-        val inputStream = client.getInputStream()
-
-        while(isRunning.get()) { // Recieve multiple messages as long as the server is running
-            val buffer = ByteArray(1024)
-            val bytesRead = inputStream.read(buffer) // Blocks until messages comes
-            if (bytesRead == -1) break // Break when client disconnects
-            val message = String(buffer,0,bytesRead)
-            addLog("${client.inetAddress.hostAddress}: $message")
-        }
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } finally {
-        client.close()
-        addLog("${client.inetAddress.hostAddress} Disconnected!")
-    }
-}
-```
+[For Full Details About The Implementation](docs/ServerSocket.md)
 ---
 **Client Socket (Kotlin)**
 
-Connect to Server
 ```kotlin
-private lateinit var socket: Socket
-private lateinit var outputStream: OutputStream
-private val isConnected = AtomicBoolean(false)
+// Create socket connection (blocks until connected or timeout)
+socket = Socket(ip,port)
+isConnected.set(true)
 
-fun connect() {
-    Thread {
-        try {
-            socket = Socket(ip,port)
-            isConnected.set(true)
+// Set up output stream for sending messages
+outputStream = socket.getOutputStream()
 
-            outputStream = socket.getOutputStream()
-            val inputStream = socket.getInputStream()
+// Start message reception loop
+val inputStream = socket.getInputStream()
+while(isConnected.get()) {
+   val buffer = ByteArray(1024) // Fixed-size receive buffer
+   val bytesRead = inputStream.read(buffer) // Blocks until data receive
 
-            while(isConnected.get()) { // Recieve multiple messages as long as client is connected to ther server
-                val buffer = ByteArray(1024)
-                val bytesRead = inputStream.read(buffer) // Blocks until message comes
-                if (bytesRead == -1) break // Break when server stopped
-                val message = String(buffer,0,bytesRead)
-                addLog("${socket.inetAddress.hostAddress}: $message")
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            disconnect() // Call disconnect function to close the socket after the server stopped
-        }
-    }.start()
+   if (bytesRead == -1) break // Server closed connection
+
+   val message = String(buffer,0,bytesRead)
+   addLog("${socket.inetAddress.hostAddress}: $message")
 }
 ```
+[For Full Details About The Implementation](docs/ClientSocket.md)
 
 ## ❓ Common Issues
 - **Connection refused:** Ensure the server is running first.

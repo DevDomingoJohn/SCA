@@ -1,5 +1,6 @@
-# ServerSocket Class Reference
+# ServerSocket Implementation
 
+[ServerSocket Class](/app/src/main/java/com/domin/sca/core/network/ServerSocket.kt)
 ```kotlin
 /**
  * A simple TCP server implementation that handles one client at a time.
@@ -149,26 +150,26 @@ class ServerSocket(
 ```
 
 ## Key Implementation Notes:
-1. Thread Management:
+1. **Thread Management:**
    - Uses raw `Thread` instead of coroutines for explicit demonstration
    - One thread for accept loop + one per client handler 
    - `AtomicBoolean` ensures thread-safe state checks
 
-2. Client Limitations:
+2. **Client Limitations:**
    - Only allows 1 concurrent client (for simplicity)
    - Immediate rejection message for excess clients
 
-3. I/O Considerations:
+3. **I/O Considerations:**
    - Uses blocking I/O operations (`accept()`, `read()`)
    - Fixed-size buffer (1024 bytes) limits message size
    - No encoding handling (assumes ASCII/UTF-8)
 
-4. Error Handling:
+4. **Error Handling:**
    - Basic exception catching with stack traces
    - Graceful cleanup in `finally` blocks
    - UI feedback via `addLog` callback
 
-5. Usage Example in ViewModel:
+5. **Usage Example in ViewModel:**
    ```kotlin
    // Start server on port
    fun startServer(port: Int) {
@@ -197,9 +198,10 @@ class ServerSocket(
         }
     }
    ```
+   [Check ServerVM Class For More Details About The Usage](/app/src/main/java/com/domin/sca/server/ServerVM.kt)
 
 ## Edge Cases to Consider:
-1. Network Permissions: Requires `<uses-permission android:name="android.permission.INTERNET"/>`
-2. Port Conflicts: Handle `BindException` if port is occupied
-3. Partial Writes: `OutputStream.write()` may not send all bytes
-4. Device Sleep: Network operations may fail when device sleeps
+1. **Network Permissions:** Requires `<uses-permission android:name="android.permission.INTERNET"/>`
+2. **Port Conflicts:** Handle `BindException` if port is occupied
+3. **Partial Writes:** `OutputStream.write()` may not send all bytes
+4. **Device Sleep:** Network operations may fail when device sleeps

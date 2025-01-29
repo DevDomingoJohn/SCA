@@ -1,5 +1,6 @@
-# ClientSocket Class Reference
+# ClientSocket Implementation
 
+[ClientSocket Class](/app/src/main/java/com/domin/sca/core/network/ClientSocket.kt)
 ```kotlin
 /**
  * A basic TCP client implementation for Android that connects to a server socket.
@@ -93,12 +94,12 @@ class ClientSocket(
 ```
 
 ## Key Implementation Notes:
-1. Thread Management:
+1. **Thread Management:**
    - Dedicated thread for connection setup/message reception
    - Separate thread for each message send operation
    - AtomicBoolean ensures safe state checks across threads
 
-2. I/O Handling:
+2. **I/O Handling:**
     ```
     val buffer = ByteArray(1024)  // Fixed buffer size
     val bytesRead = inputStream.read(buffer)  // Blocking call
@@ -106,12 +107,12 @@ class ClientSocket(
    - Maximum message size limited to 1024 bytes
    - Blocking read waits indefinitely for server messages
 
-3. Error Handling:
+3. **Error Handling:**
    - Automatic cleanup in `finally` block
    - UI feedback via `addLog` callback
    - Connection state reset on any failure
 
-4. Usage Example in ViewModel:
+4. **Usage Example in ViewModel:**
    ```kotlin
    // Create client instance & Connect to server
    fun connectToServer(ip: String, port: Int) { 
@@ -140,24 +141,25 @@ class ClientSocket(
        }
    }
    ```
+   [Check ClientVM For More Details About The Usage](/app/src/main/java/com/domin/sca/client/ClientVM.kt)
 
-5. Common Pitfalls Addressed:
-   1. UI Blocking:
+5. **Common Pitfalls Addressed:**
+   1. **UI Blocking:**
       - All network operations run in background threads
       - `addLog` callback handles UI updates safely
       
-   2. Connection State Management:
+   2. **Connection State Management:**
         ```
       if (isConnected.get()) { ... }  // Check before socket operations
       ```
       - Prevents operations on closed sockets
 
-   3. Resource Cleanup:
+   3. **Resource Cleanup:**
       - `socket.close()` in `disconnect()` releases system resources
       - Streams closed automatically with socket
 
 ## Edge Cases to Consider:
-1. Network Unavailable: Handle during initial connection
-2. Server Disconnects: Detect via `read() == -1`
-3. Partial Writes: `flush()` ensures full message transmission
-4. Encoding Issues: Assumes UTF-8 (no explicit charset handling)
+1. **Network Unavailable:** Handle during initial connection
+2. **Server Disconnects:** Detect via `read() == -1`
+3. **Partial Writes:** `flush()` ensures full message transmission
+4. **Encoding Issues:** Assumes UTF-8 (no explicit charset handling)
