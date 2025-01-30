@@ -29,9 +29,7 @@ Learn how to:
 2. **Receive a message:** Both client socket and server socket displays text from each other.
 
 ## 📱 Screenshots
-![Home](docs/screenshots/home.jpg)
-![Server](docs/screenshots/server.jpg) | ![Client](docs/screenshots/client.png)
-
+<img src="https://github.com/DevDomingoJohn/SCA/blob/master/docs/screenshots/home.jpg" width="300" height="700"> <img src="https://github.com/DevDomingoJohn/SCA/blob/master/docs/screenshots/server.jpg" width="300" height="700"> <img src="https://github.com/DevDomingoJohn/SCA/blob/master/docs/screenshots/client.png" width="300" height="700">
 
 ## 📄 Key Code Snippets
 **Server Socket (Kotlin)**
