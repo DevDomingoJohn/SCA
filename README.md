@@ -93,14 +93,3 @@ while(isConnected.get()) {
 ## 🔍 Learn More
 - [Android Networking Guide](https://developer.android.com/develop/connectivity)
 - [Java Sockets Tutorial](https://docs.oracle.com/javase/tutorial/networking/sockets/)
-
-## Visual Diagrams
-```mermaid  
-sequenceDiagram  
-    participant Client  
-    participant Server  
-    Client->>Server: Connect to IP:8888  
-    Server-->>Client: Accept connection  
-    Client->>Server: Send "Hello, Server!"  
-    Server-->>Client: Acknowledge  
-``` 
