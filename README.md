@@ -28,6 +28,11 @@ Learn how to:
 1. **Send a message:** Both client socket and sever socket can send a text to each other.
 2. **Receive a message:** Both client socket and server socket displays text from each other.
 
+## 📱 Screenshots
+![Home](docs/screenshots/home.jpg)
+![Server](docs/screenshots/server.jpg) | ![Client](docs/screenshots/client.png)
+
+
 ## 📄 Key Code Snippets
 **Server Socket (Kotlin)**
 
