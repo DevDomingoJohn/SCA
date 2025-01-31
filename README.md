@@ -2,7 +2,7 @@
 This is a simple Android app demonstrating client-server communication via sockets.
 This Android app also demonstrate a simple realtime communication, like a chat app.
 
-## Tech Stack
+## 💻 Tech Stack
 List of technologies used:
 * **Language:** Kotlin
 * **UI Framework:** Jetpack Compose
@@ -25,13 +25,10 @@ Learn how to:
     * Launch the client on Device B
 
 ## 🚀 Usage
-1. **Send a message:** Both client socket and sever socket can send a text to each other.
-2. **Receive a message:** Both client socket and server socket displays text from each other.
-
-## 📱 Screenshots
-| Home Screen | Server Screen | Client Screen |
-|---------------|---------------|---------------|
-| ![Home](docs/screenshots/home.jpg) | ![Server](docs/screenshots/server.jpg) | ![Client](docs/screenshots/client.png)
+1. **Starting a server:** Server-side can start a server on a given port.
+2. **Connecting to server:** Client-side can connect to a server using the server's local IP and the port where it's listening.
+3. **Send a message:** Both client socket and sever socket can send a message to each other.
+4. **Receive a message:** Both client socket and server socket displays message from each other.
 
 ## 🧪 Quick Testing
 1. Download [app-release-test.apk](app-release.apk) and intall it on two devices.
@@ -40,6 +37,11 @@ Learn how to:
 3. **Device B (Client-side)**:  
    - Enter the server’s local IP and port where the server is listening for incoming connections.
    - Connect to server and wait for the log: "Welcome To Soul Society!"
+
+## 📱 Screenshots
+| Home Screen | Server Screen | Client Screen |
+|---------------|---------------|---------------|
+| ![Home](docs/screenshots/home.jpg) | ![Server](docs/screenshots/server.jpg) | ![Client](docs/screenshots/client.png)
 
 ## 📄 Key Code Snippets
 **Server Socket (Kotlin)**
