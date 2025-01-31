@@ -29,7 +29,15 @@ Learn how to:
 2. **Receive a message:** Both client socket and server socket displays text from each other.
 
 ## 📱 Screenshots
-<img src="https://github.com/DevDomingoJohn/SCA/blob/master/docs/screenshots/home.jpg" width="300" height="700"> <img src="https://github.com/DevDomingoJohn/SCA/blob/master/docs/screenshots/server.jpg" width="300" height="700"> <img src="https://github.com/DevDomingoJohn/SCA/blob/master/docs/screenshots/client.png" width="300" height="700">
+| Home Screen | Server Screen | Client Screen |
+|---------------|---------------|---------------|
+| ![Home](docs/screenshots/home.jpg) | ![Server](docs/screenshots/server.jpg) | ![Client](docs/screenshots/client.png)
+
+## 🧪 Quick Testing
+1. **Server-side**:  
+   - Enter port and start server and wait for the log: "Server started on port 8888".  
+2. **Client-side**:  
+   - Enter the server’s local IP and port where the server is listening for incoming connections.
 
 ## 📄 Key Code Snippets
 **Server Socket (Kotlin)**
