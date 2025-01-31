@@ -34,10 +34,12 @@ Learn how to:
 | ![Home](docs/screenshots/home.jpg) | ![Server](docs/screenshots/server.jpg) | ![Client](docs/screenshots/client.png)
 
 ## 🧪 Quick Testing
-1. **Server-side**:  
-   - Enter port and start server and wait for the log: "Server started on port 8888".  
-2. **Client-side**:  
+1. Download [app-release-test.apk](app-release.apk) and intall it on two devices.
+2. **Device A (Server-side)**:  
+   - Enter port and start server and wait for the log: "Server started on port: 8888".  
+3. **Device B (Client-side)**:  
    - Enter the server’s local IP and port where the server is listening for incoming connections.
+   - Connect to server and wait for the log: "Welcome To Soul Society!"
 
 ## 📄 Key Code Snippets
 **Server Socket (Kotlin)**
