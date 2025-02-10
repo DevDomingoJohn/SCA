@@ -4,10 +4,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -44,13 +49,19 @@ fun ClientScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 30.dp, start = 10.dp, end = 10.dp)
+            .padding(horizontal = 10.dp)
+            .windowInsetsPadding(
+                WindowInsets(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                )
+            )
     ) {
         Text(text = "Your Local IP: $localIp")
         LazyColumn(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
-                .fillMaxHeight(0.7f)
         ) {
             items(logs) { log ->
                 Text(text = log)
@@ -59,20 +70,18 @@ fun ClientScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.3f)
         ) {
             TextField(
                 value = message.value,
                 onValueChange = { message.value = it },
                 placeholder = { Text(text = "Message") },
-                modifier = Modifier.weight(0.7f)
+                modifier = Modifier.weight(1f)
             )
             Button(
                 onClick = {
                     vm.message(message.value)
                     message.value = ""
-                },
-                modifier = Modifier.weight(0.3f)
+                }
             ) {
                 Text(text = "Send")
             }

@@ -1,36 +1,30 @@
 package com.domin.sca.home
 
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import java.net.NetworkInterface
 
-class HomeVM(
-    private val connectivityManager: ConnectivityManager
-): ViewModel() {
-
+class HomeVM: ViewModel() {
     private val _state = MutableStateFlow(UIState())
     val state = _state.asStateFlow()
 
-    fun getLocalIp(): String {
-        var result = ""
-        val network: Network? = connectivityManager.activeNetwork
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
-        networkCapabilities?.let {
-            if (it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                val linkProperties = connectivityManager.getLinkProperties(network)
-                result = linkProperties?.linkAddresses?.firstOrNull { linkAddress ->
-                    linkAddress.address.hostAddress?.contains(".") == true
-                }?.address?.hostAddress!!
+    fun getLocalIp(): String? {
+        val networkInterfaces = NetworkInterface.getNetworkInterfaces()
+        while (networkInterfaces.hasMoreElements()) {
+            val networkInterface = networkInterfaces.nextElement()
+            val addresses = networkInterface.inetAddresses
+
+            while (addresses.hasMoreElements()) {
+                val address = addresses.nextElement()
+                if (!address.isLoopbackAddress && address.hostAddress?.contains(".") == true) {
+                    return address.hostAddress
+                }
             }
         }
 
-        return result
+        return null
     }
 
     fun updateServerPort(value: String) {
